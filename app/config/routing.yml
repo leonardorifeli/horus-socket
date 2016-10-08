@@ -1,0 +1,10 @@
+socket_server:
+    resource: "@SocketServerBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+public:
+    resource: "@PublicBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
