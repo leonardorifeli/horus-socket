@@ -1,4 +1,11 @@
-poison-spam-police-api
-======================
+<img src="http://1.bp.blogspot.com/-H44p_3CJt1A/UA2vIVxuZ5I/AAAAAAAAFho/57AEAr81E20/s1600/FT3.jpg" alt="Horus"
+         title="Horus" align="right" />
 
-A Symfony project created on September 25, 2016, 7:25 pm.
+HORUS SOCKET
+=====================
+This project is an APP using websocket.
+
+License
+========================
+
+[MIT License](http://leonardorifeli.mit-license.org/) © Leonardo Rifeli
