@@ -28,11 +28,6 @@ class SocketServerService implements MessageComponentInterface
             $queryParams[$queryParamKey] = $queryParamValue;
         }
 
-        if (!array_key_exists('id', $queryParams)) {
-            $connection->close();
-            return;
-        }
-
         if (!array_key_exists('name', $queryParams)) {
             $connection->close();
             return;
@@ -43,37 +38,29 @@ class SocketServerService implements MessageComponentInterface
             return;
         }
 
-        $connection->session = array(
-            'room' => $queryParams['room'],
-            'user' => str_replace("%20", " ", $queryParams['name']),
-            'id' => $queryParams['id'],
-            'message' => (array_key_exists('message', $queryParams)) ? $queryParams['message'] : null
-        );
+        $session = new \stdClass();
+        $session->room = $queryParams['room'];
+        $session->name = str_replace("%20", " ", $queryParams['name']);
+
+        $connection->session = $session;
 
         self::$connections->attach($connection);
     }
 
     public function onMessage(ConnectionInterface $connection, $jsonMessage)
     {
+        foreach (self::$connections as $key => $otherConnection) {
+            if($otherConnection->session->room != $connection->session->room)
+                continue;
+
+            if ($from !== $client) {
+                $otherConnection->send($jsonMessage);
+            }
+        }
     }
 
     public function onClose(ConnectionInterface $connection)
     {
-        $user[$connection->resourceId] = array(
-            'user' => $connection->session['user'],
-            'id' => $connection->session['id'],
-            'room' => $connection->session['room'],
-            'socketId' => $connection->resourceId,
-            'message' => $connection->session['message'],
-            'action' => 2
-        );
-
-        $user = json_encode($user);
-
-        foreach (self::$connections as $key => $client) {
-            $client->send($user);
-        }
-
         self::$connections->detach($connection);
     }
 
@@ -82,23 +69,18 @@ class SocketServerService implements MessageComponentInterface
         $connection->close();
     }
 
-    public function sendUsers()
+    public function sendBotMessage()
     {
-        $users = [];
-        foreach (self::$connections as $anotherConnection) {
-            $users[intval($anotherConnection->resourceId)] = array(
-                'user' => $anotherConnection->session['user'],
-                'id' => $anotherConnection->session['id'],
-                'room' => $anotherConnection->session['room'],
-                'socketId' => $anotherConnection->resourceId,
-                'message' => $anotherConnection->session['message'],
-                'action' => 1
-            );
-        }
+        $message = [
+            "name" => "Server",
+            "room" => "room1",
+            "text" => "Hello users!",
+            "time" => date("H:i a"),
+        ];
 
-        foreach (self::$connections as $key => $client) {
-            $newUser = json_encode($users);
-            $client->send($newUser);
+        foreach (self::$connections as $key => $connection) {
+            $newUser = json_encode($message);
+            $connection->send($connection);
         }
     }
 }

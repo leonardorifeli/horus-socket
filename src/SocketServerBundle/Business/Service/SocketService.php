@@ -27,16 +27,14 @@ class SocketService
             $this->ip
         );
 
-        $loop = $server->loop;
-
-        $loop->addPeriodicTimer(SocketTimerEnum::TIMER, function () use ($horus) {
-            $horus->sendUsers();
+        $server->loop->addPeriodicTimer(SocketTimerEnum::TIMER, function () use ($horus) {
+            $horus->sendBotMessage();
         });
 
         return $server;
     }
 
-    public function setAddressAndPort(string $ipAndPort) : bool
+    public function setAddressAndPort(string $ipAndPort)
     {
         $ipAndPort = $this->getIpAndPortInArray($ipAndPort);
 

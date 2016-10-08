@@ -1,0 +1,7 @@
+chat:
+    path:     /
+    defaults: { _controller: PublicBundle:Chat:index }
+
+chat_js:
+    path:     /main.js
+    defaults: { _controller: PublicBundle:Chat:js }

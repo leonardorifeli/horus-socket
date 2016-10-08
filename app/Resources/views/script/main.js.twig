@@ -1,0 +1,81 @@
+(function() {
+
+	var name;
+	var room;
+	var socket = "ws://localhost:777/?name=leonardo&room=room1";
+	var conn = new WebSocket(socket);
+	var messages = [];
+	var messages_template = Handlebars.compile($('#messages-template').html());
+
+	conn.onopen = function(e) {
+	};
+
+	conn.onmessage = function(e) {
+		var msg = JSON.parse(e.data);
+		updateMessages(msg);
+	};
+
+	$('#join-chat').click(function() {
+		name = $('#user').val();
+		room = $('#room').val();
+
+		$('#user-container').addClass('hidden');
+		$('#main-container').removeClass('hidden');
+
+		var msg = {
+			'name': name,
+			'room': room,
+			'text': name + ' entered the room',
+			'time': moment().format('hh:mm a')
+		};
+
+		updateMessages(msg);
+		conn.send(JSON.stringify(msg));
+
+		$('#user').val('');
+	});
+
+	$('#send-msg').click(function(){
+		var text = $('#msg').val();
+		var msg = {
+			'name': name,
+			'room': room,
+			'text': text,
+			'time': moment().format('hh:mm a')
+		};
+
+		updateMessages(msg);
+		conn.send(JSON.stringify(msg));
+
+		$('#msg').val('');
+	});
+
+	$('#leave-room').click(function() {
+		var msg = {
+			'name': name,
+			'room': room,
+			'text': name + ' has left the room',
+			'time': moment().format('hh:mm a')
+		};
+
+		updateMessages(msg);
+
+		conn.send(JSON.stringify(msg));
+
+		$('#messages').html('');
+		messages = [];
+
+		$('#main-container').addClass('hidden');
+		$('#user-container').removeClass('hidden');
+	});
+
+	function updateMessages(msg) {
+		if(msg.room == room){
+			messages.push(msg);
+			var messages_html = messages_template({'messages': messages});
+			$('#messages').html(messages_html);
+			$("#messages").animate({ scrollTop: $('#messages')[0].scrollHeight}, 1000);
+		}
+	}
+
+})();
