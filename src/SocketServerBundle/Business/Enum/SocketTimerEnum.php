@@ -5,6 +5,6 @@ namespace SocketServerBundle\Business\Enum;
 abstract class SocketTimerEnum
 {
 
-    const TIMER = 1;
+    const TIMER = 2;
 
 }

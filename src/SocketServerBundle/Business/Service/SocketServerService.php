@@ -38,10 +38,9 @@ class SocketServerService implements MessageComponentInterface
             return;
         }
 
-        $session = new \stdClass();
+        $session = new \stdClass;
         $session->room = $queryParams['room'];
-        $session->name = str_replace("%20", " ", $queryParams['name']);
-
+        $session->name = $queryParams['name'];
         $connection->session = $session;
 
         self::$connections->attach($connection);
@@ -49,11 +48,11 @@ class SocketServerService implements MessageComponentInterface
 
     public function onMessage(ConnectionInterface $connection, $jsonMessage)
     {
-        foreach (self::$connections as $key => $otherConnection) {
+        foreach (self::$connections as $otherConnection) {
             if($otherConnection->session->room != $connection->session->room)
                 continue;
 
-            if ($from !== $client) {
+            if ($connection !== $otherConnection) {
                 $otherConnection->send($jsonMessage);
             }
         }
@@ -71,16 +70,15 @@ class SocketServerService implements MessageComponentInterface
 
     public function sendBotMessage()
     {
-        $message = [
-            "name" => "Server",
-            "room" => "room1",
-            "text" => "Hello users!",
-            "time" => date("H:i a"),
-        ];
+        foreach (self::$connections as $connection) {
+            $message = [
+                "user" => "Server",
+                "room" => "meetupPHPSC",
+                "text" => "Hello users! I'm a boot.",
+                "time" => date("H:i a"),
+            ];
 
-        foreach (self::$connections as $key => $connection) {
-            $newUser = json_encode($message);
-            $connection->send($connection);
+            $connection->send(json_encode($message));
         }
     }
 }
