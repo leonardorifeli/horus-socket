@@ -52,9 +52,10 @@ class SocketServerService implements MessageComponentInterface
 			if($otherConnection->session->room != $connection->session->room)
 				continue;
 
-			if ($connection !== $otherConnection) {
-				$otherConnection->send($jsonMessage);
-			}
+			if ($connection === $otherConnection)
+				continue;
+			
+			$otherConnection->send($jsonMessage);
 		}
 	}
 
