@@ -12,52 +12,52 @@ use SocketServerBundle\Business\Enum\SocketTimerEnum;
 class SocketService
 {
 
-    private $ip;
-    private $port;
+	private $ip;
+	private $port;
 
-    public function start() : IoServer
-    {
-        $horus = new SocketServerService();
+	public function start() : IoServer
+	{
+		$horus = new SocketServerService();
 
-        $server = IoServer::factory(
-            new HttpServer(
-                new WsServer($horus)
-            ),
-            $this->port,
-            $this->ip
-        );
+		$server = IoServer::factory(
+			new HttpServer(
+				new WsServer($horus)
+			),
+			$this->port,
+			$this->ip
+		);
 
-        $server->loop->addPeriodicTimer(SocketTimerEnum::TIMER, function () use ($horus) {
-            $horus->sendBotMessage();
-        });
+		$server->loop->addPeriodicTimer(SocketTimerEnum::TIMER, function () use ($horus) {
+			$horus->sendBotMessage();
+		});
 
-        return $server;
-    }
+		return $server;
+	}
 
-    public function setAddressAndPort(string $ipAndPort)
-    {
-        $ipAndPort = $this->getIpAndPortInArray($ipAndPort);
+	public function setAddressAndPort(string $ipAndPort)
+	{
+		$ipAndPort = $this->getIpAndPortInArray($ipAndPort);
 
-        $this->ip = $ipAndPort[0];
-        $this->port = $ipAndPort[1];
-    }
+		$this->ip = $ipAndPort[0];
+		$this->port = $ipAndPort[1];
+	}
 
-    private function getIpAndPortInArray(string $ipAndPort) : array
-    {
-        $ipAndPort = explode(":", $ipAndPort);
+	private function getIpAndPortInArray(string $ipAndPort) : array
+	{
+		$ipAndPort = explode(":", $ipAndPort);
 
-        if(!$this->ipAndPortIsValid($ipAndPort))
-            throw new \Exception("Error! Check your IP or PORT.", 500);
+		if(!$this->ipAndPortIsValid($ipAndPort))
+			throw new \Exception("Error! Check your IP or PORT.", 500);
 
-        return $ipAndPort;
-    }
+		return $ipAndPort;
+	}
 
-    private function ipAndPortIsValid(array $ipAndPort) : bool
-    {
-        if(!array_key_exists(0, $ipAndPort) || !array_key_exists(1, $ipAndPort))
-            return false;
+	private function ipAndPortIsValid(array $ipAndPort) : bool
+	{
+		if(!array_key_exists(0, $ipAndPort) || !array_key_exists(1, $ipAndPort))
+			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 }
