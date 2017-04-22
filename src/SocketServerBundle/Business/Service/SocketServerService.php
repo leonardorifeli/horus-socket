@@ -77,6 +77,7 @@ class SocketServerService implements MessageComponentInterface
 				"room" => "meetupPHPSC",
 				"text" => "Hello users! I'm a boot.",
 				"time" => date("H:i a"),
+				"date" => date("Y-m-d"),
 			];
 
 			$connection->send(json_encode($message));
