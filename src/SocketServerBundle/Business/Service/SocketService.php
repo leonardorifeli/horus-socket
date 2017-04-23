@@ -54,10 +54,7 @@ class SocketService
 
 	private function ipAndPortIsValid(array $ipAndPort) : bool
 	{
-		if(!array_key_exists(0, $ipAndPort) || !array_key_exists(1, $ipAndPort))
-			return false;
-
-		return true;
+		return !array_key_exists(0, $ipAndPort) || !array_key_exists(1, $ipAndPort);
 	}
 
 }
