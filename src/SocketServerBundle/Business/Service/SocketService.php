@@ -38,6 +38,9 @@ class SocketService
 	{
 		$ipAndPort = $this->getIpAndPortInArray($ipAndPort);
 
+		if(count($ipAndPort) != 2)
+			throw new \Exception("Error! Check your IP or PORT.", 500);
+
 		$this->ip = $ipAndPort[0];
 		$this->port = $ipAndPort[1];
 	}
